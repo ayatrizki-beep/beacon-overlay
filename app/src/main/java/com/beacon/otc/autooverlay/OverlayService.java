@@ -31,7 +31,6 @@ public class OverlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        startForegroundCompat();
         buildOverlay();
         registerResultReceiver();
     }

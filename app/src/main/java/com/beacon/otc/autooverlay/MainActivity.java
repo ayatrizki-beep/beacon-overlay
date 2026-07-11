@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
             return;
         }
         Intent s = new Intent(this, OverlayService.class);
-        if (Build.VERSION.SDK_INT >= 26) startForegroundService(s); else startService(s);
+        startService(s);
         status.setText("Overlay aktif. Sekarang tekan START AUTO CAPTURE.");
     }
 
