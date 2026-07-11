@@ -1,0 +1,48 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:theme="@style/AppTheme"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:supportsRtl="true">
+
+        <!--
+          resizeableActivity + windowLayoutAffinity: mengizinkan MainActivity ditaruh
+          di split-screen berdampingan dengan IQ Option. CaptureService tetap merekam
+          SELURUH layar fisik lewat MediaProjection, jadi auto-scan tetap jalan walau
+          app ini hanya separuh layar / diminimize ke background di mode multi-window.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="false"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <layout
+                android:defaultWidth="360dp"
+                android:defaultHeight="640dp"
+                android:minWidth="300dp"
+                android:minHeight="300dp"
+                android:gravity="top|end" />
+        </activity>
+
+        <service
+            android:name=".OverlayService"
+            android:exported="false" />
+
+        <service
+            android:name=".CaptureService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+    </application>
+</manifest>
