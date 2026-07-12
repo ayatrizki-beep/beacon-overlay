@@ -61,7 +61,6 @@ public class OverlayService extends Service {
         v.setTextColor(color);
         v.setTypeface(null, style);
         v.setGravity(Gravity.CENTER);
-        v.setSingleLine(false);
         v.setPadding(4, 2, 4, 2);
         return v;
     }
@@ -69,10 +68,10 @@ public class OverlayService extends Service {
     private Button btn(String t, int bg, int fg) {
         Button b = new Button(this);
         b.setText(t);
-        b.setTextSize(14);
+        b.setTextSize(10);
         b.setTextColor(fg);
         b.setBackgroundColor(bg);
-        b.setPadding(6,4,6,4);
+        b.setPadding(1,1,1,1);
         return b;
     }
 
@@ -81,13 +80,11 @@ public class OverlayService extends Service {
 
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(12, 10, 12, 10);
+        root.setPadding(6, 5, 6, 5);
         root.setBackgroundColor(Color.rgb(10, 10, 10));
-        root.setMinimumWidth(520);
-        root.setMinimumHeight(430);
 
-        signal = tv("READY", 30, Color.rgb(255, 209, 92), 1);
-        root.addView(signal, new LinearLayout.LayoutParams(520, 76));
+        signal = tv("READY", 22, Color.rgb(255, 209, 92), 1);
+        root.addView(signal, new LinearLayout.LayoutParams(360, 46));
 
         LinearLayout row0 = new LinearLayout(this);
         row0.setOrientation(LinearLayout.HORIZONTAL);
@@ -139,19 +136,19 @@ public class OverlayService extends Service {
         t90.setOnClickListener(v -> { SharedState.setCrowdDown(90); updateManualText(); });
 
         crowd = tv("CROWD -", 10, Color.GRAY, 1);
-        root.addView(crowd, new LinearLayout.LayoutParams(520, 48));
+        root.addView(crowd, new LinearLayout.LayoutParams(340, 26));
 
         phase = tv("MODE:-", 10, Color.rgb(53,214,255), 1);
         phase.setGravity(Gravity.LEFT);
-        root.addView(phase, new LinearLayout.LayoutParams(520, 48));
+        root.addView(phase, new LinearLayout.LayoutParams(350, 28));
 
         wait = tv("TUNGGU:-", 12, Color.rgb(255,209,92), 1);
         wait.setGravity(Gravity.LEFT);
-        root.addView(wait, new LinearLayout.LayoutParams(520, 48));
+        root.addView(wait, new LinearLayout.LayoutParams(350, 30));
 
         levels = tv("LEVEL:-", 9, Color.WHITE, 0);
         levels.setGravity(Gravity.LEFT);
-        root.addView(levels, new LinearLayout.LayoutParams(520, 70));
+        root.addView(levels, new LinearLayout.LayoutParams(350, 52));
 
         reason = tv("Auto scan berjalan setelah izin capture.", 9, Color.LTGRAY, 0);
         reason.setGravity(Gravity.LEFT);
@@ -162,7 +159,7 @@ public class OverlayService extends Service {
         reason.setMaxLines(6);
         reason.setVerticalScrollBarEnabled(true);
         reason.setMovementMethod(new ScrollingMovementMethod());
-root.addView(reason, new LinearLayout.LayoutParams(520, 66));
+root.addView(reason, new LinearLayout.LayoutParams(350, 48));
 
         LinearLayout rowLearn = new LinearLayout(this);
         rowLearn.setOrientation(LinearLayout.HORIZONTAL);
@@ -180,7 +177,7 @@ root.addView(reason, new LinearLayout.LayoutParams(520, 66));
 
         int type = Build.VERSION.SDK_INT >= 26 ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-                620, 520,
+                370, WindowManager.LayoutParams.WRAP_CONTENT,
                 type,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
