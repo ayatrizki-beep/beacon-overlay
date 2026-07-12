@@ -82,8 +82,19 @@ public class OtcIntentEngine {
             return r;
         }
 
+        if ("open_noise".equals(zone)) {
+            r.signal = "TUNGGU DETIK 02";
+            r.phase = "OPEN NOISE";
+            r.wait = "Jangan klik 00-01. Tunggu detik 02-04.";
+            r.levels = makeLevels(preparedBias);
+            r.reason = "Noise awal candle. Entry 1M baru aman di detik 02-04 jika setup sebelumnya valid.";
+            r.confidence = 20;
+            return r;
+        }
+
         if ("execute".equals(zone)) {
-            boolean freshPrepare = preparedMinute >= 0 && preparedMinute != minute && !"SKIP".equals(preparedBias);
+            int setupAge = preparedMinute < 0 ? 999 : (minute - preparedMinute + 60) % 60;
+            boolean freshPrepare = setupAge == 1 && !"SKIP".equals(preparedBias);
             boolean tickOk = tickSupports(preparedBias);
 
             if (freshPrepare && preparedConfidence >= 60 && tickOk) {
@@ -231,12 +242,12 @@ public class OtcIntentEngine {
         boolean noLowerReject = !"lower".equals(d.wick) || d.bodyRatio >= 0.55;
 
         if (("sell_extreme".equals(crowd) || "sell_heavy".equals(crowd)) &&
-                greenStrong && tickUp && noUpperReject) {
+                greenStrong && tickUp) {
             return "SHORT_SQUEEZE";
         }
 
         if (("buy_extreme".equals(crowd) || "buy_heavy".equals(crowd)) &&
-                redStrong && tickDown && noLowerReject) {
+                redStrong && tickDown) {
             return "LONG_SQUEEZE";
         }
 
@@ -246,6 +257,14 @@ public class OtcIntentEngine {
     private static String decideBias(BitmapAnalyzer.Data d, String crowd, String squeeze) {
         if ("SHORT_SQUEEZE".equals(squeeze)) return "BUY";
         if ("LONG_SQUEEZE".equals(squeeze)) return "SELL";
+
+        // MHI Filter:
+        // Body kuat tapi MHI berlawanan = rawan fake breakout / fake breakdown.
+        // Jangan paksa entry jika MHI memberi peringatan.
+        if (!d.doji && d.bodyRatio >= 0.42) {
+            if ("green".equals(d.dominant) && "red".equals(d.mhi)) return "SKIP";
+            if ("red".equals(d.dominant) && "green".equals(d.mhi)) return "SKIP";
+        }
 
         if ("buy_extreme".equals(crowd) || "buy_heavy".equals(crowd)) return "SELL";
         if ("sell_extreme".equals(crowd) || "sell_heavy".equals(crowd)) return "BUY";
@@ -380,7 +399,8 @@ public class OtcIntentEngine {
     }
 
     private static String zoneType(int sec) {
-        if (sec <= 5) return "execute";
+        if (sec <= 1) return "open_noise";
+        if (sec <= 4) return "execute";
         if (sec <= 15) return "late";
         if (sec <= 29) return "missed";
         if (sec <= 44) return "stop";
@@ -390,7 +410,8 @@ public class OtcIntentEngine {
 
     public static String zoneName() {
         int sec = Calendar.getInstance().get(Calendar.SECOND);
-        if (sec <= 5) return "EXECUTE";
+        if (sec <= 1) return "OPEN NOISE";
+        if (sec <= 4) return "EXECUTE";
         if (sec <= 15) return "LATE";
         if (sec <= 29) return "MISSED";
         if (sec <= 44) return "STOP";
