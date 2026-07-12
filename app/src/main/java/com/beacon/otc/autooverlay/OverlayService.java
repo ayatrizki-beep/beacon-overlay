@@ -180,7 +180,7 @@ root.addView(reason, new LinearLayout.LayoutParams(520, 66));
 
         int type = Build.VERSION.SDK_INT >= 26 ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-                370, WindowManager.LayoutParams.WRAP_CONTENT,
+                620, 520,
                 type,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
