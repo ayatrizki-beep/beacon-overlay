@@ -10,8 +10,8 @@ android {
         applicationId "com.beacon.otc.autooverlay"
         minSdk 26
         targetSdk 33
-        versionCode 6
-        versionName '1.0.6-gui-touch-scroll'
+        versionCode 7
+        versionName '1.0.7-gui-scroll-fix'
     }
 
     buildTypes {

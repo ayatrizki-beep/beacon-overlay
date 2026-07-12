@@ -1,5 +1,7 @@
 package com.beacon.otc.autooverlay;
 
+import android.text.method.ScrollingMovementMethod;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
