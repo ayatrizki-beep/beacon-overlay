@@ -150,7 +150,14 @@ public class OverlayService extends Service {
 
         reason = tv("Auto scan berjalan setelah izin capture.", 9, Color.LTGRAY, 0);
         reason.setGravity(Gravity.LEFT);
-        root.addView(reason, new LinearLayout.LayoutParams(350, 48));
+        
+        reason.setGravity(Gravity.LEFT);
+        reason.setSingleLine(false);
+        reason.setMinLines(3);
+        reason.setMaxLines(6);
+        reason.setVerticalScrollBarEnabled(true);
+        reason.setMovementMethod(new ScrollingMovementMethod());
+root.addView(reason, new LinearLayout.LayoutParams(350, 48));
 
         LinearLayout rowLearn = new LinearLayout(this);
         rowLearn.setOrientation(LinearLayout.HORIZONTAL);

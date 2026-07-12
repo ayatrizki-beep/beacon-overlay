@@ -50,9 +50,9 @@ public class OtcIntentEngine {
                 preparedMinute = minute;
             }
 
-            r.signal = preparedBias + " PREPARE";
+            r.signal = preparedBias + " SIAPKAN";
             r.phase = "VALIDASI ARAH / GOLD";
-            r.wait = "Entry bukan sekarang. Tunggu candle baru 00-05.";
+            r.wait = "ARAH SAJA. Jangan klik. Tunggu candle baru 00-05.";
             r.levels = makeLevels(preparedBias);
             r.reason = "45-54 adalah zona baca arah, bukan klik. " +
                     makeReason(d, crowd, zone, preparedBias, "PREPARE", preparedConfidence);
@@ -69,9 +69,9 @@ public class OtcIntentEngine {
             }
 
             String spikeInfo = deathSpike;
-            r.signal = preparedBias + " WAIT NEXT";
+            r.signal = preparedBias + " TUNGGU CANDLE BARU";
             r.phase = "DEATH ZONE / FAKE SPIKE WATCH";
-            r.wait = "Jangan entry 55-59. Tunggu close lalu entry 00-05.";
+            r.wait = "Jangan klik 55-59. Tunggu candle baru 00-05.";
             r.levels = makeLevels(preparedBias);
             r.reason = "55-59 rawan fake spike. Spike:" + spikeInfo + " | " +
                     makeReason(d, crowd, zone, preparedBias, "WAIT NEXT", preparedConfidence);
@@ -84,9 +84,9 @@ public class OtcIntentEngine {
             boolean tickOk = tickSupports(preparedBias);
 
             if (hasFreshPrepare && preparedConfidence >= 58 && tickOk) {
-                r.signal = preparedBias + " NOW";
+                r.signal = preparedBias + " SEKARANG";
                 r.phase = "EXECUTION WINDOW";
-                r.wait = "Masuk sekarang. Valid 00-05. Expiry FULL 1M.";
+                r.wait = "KLIK SEKARANG. Valid 00-05. Expiry FULL 1M.";
                 r.levels = makeLevels(preparedBias);
                 r.reason = "Entry valid karena candle baru mulai + tick mendukung. " +
                         "Tick:" + lastTick + " | " +
@@ -96,9 +96,9 @@ public class OtcIntentEngine {
             }
 
             if (hasFreshPrepare && preparedConfidence >= 50 && !tickOk) {
-                r.signal = preparedBias + " WAIT TICK";
+                r.signal = preparedBias + " TUNGGU TICK";
                 r.phase = "EXECUTION WINDOW";
-                r.wait = "Arah ada, tapi tick belum mendukung. Kalau lewat 05 detik = batal.";
+                r.wait = "Arah ada, tapi tick belum mendukung. Lewat 05 detik = batal.";
                 r.levels = makeLevels(preparedBias);
                 r.reason = "Jangan klik kalau tick berlawanan. Tick:" + lastTick + " | " +
                         makeReason(d, crowd, zone, preparedBias, "WAIT TICK", preparedConfidence);
@@ -117,9 +117,9 @@ public class OtcIntentEngine {
 
         if ("late".equals(zone)) {
             if (!"SKIP".equals(preparedBias)) {
-                r.signal = preparedBias + " LATE WARNING";
+                r.signal = preparedBias + " TELAT 1M";
                 r.phase = "LATE 1M";
-                r.wait = "Jangan kejar 1M. Kalau mau 1M30/2M wajib TF 5M dan 10M searah.";
+                r.wait = "TELAT untuk 1M. Jangan kejar. 1M30/2M wajib TF 5M dan 10M searah.";
                 r.levels = makeLevels(preparedBias);
                 r.reason = "00-05 sudah lewat. Untuk 1M ini terlambat. Tick:" + lastTick +
                         " | MTF manual wajib cek 10M -> 5M -> 2M.";
@@ -132,9 +132,9 @@ public class OtcIntentEngine {
             String bias = "SKIP".equals(liveBias) ? preparedBias : liveBias;
 
             if (!"SKIP".equals(bias)) {
-                r.signal = bias + " MISSED 1M";
+                r.signal = bias + " LEWAT 1M";
                 r.phase = "EXPIRY GUARD";
-                r.wait = "Jangan entry 1M. Sudah lewat safe window. Tunggu setup berikutnya.";
+                r.wait = "LEWAT untuk 1M. Jangan entry. Tunggu setup berikutnya.";
                 r.levels = makeLevels(bias);
                 r.reason = "Lewat 15 detik = 1M tidak ideal. Kalau 1M30/2M, hanya boleh jika 10M dan 5M mendukung. Tick:" + lastTick;
                 r.confidence = Math.max(15, liveConf - 15);
