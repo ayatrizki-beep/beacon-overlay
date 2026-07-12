@@ -1,5 +1,6 @@
 package com.beacon.otc.autooverlay;
 
+import android.text.method.ScrollingMovementMethod;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -67,7 +68,7 @@ public class OverlayService extends Service {
     private Button btn(String t, int bg, int fg) {
         Button b = new Button(this);
         b.setText(t);
-        b.setTextSize(12);
+        b.setTextSize(10);
         b.setTextColor(fg);
         b.setBackgroundColor(bg);
         b.setPadding(1,1,1,1);
@@ -79,8 +80,6 @@ public class OverlayService extends Service {
 
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setMinimumWidth(450);
-        root.setMinimumHeight(390);
         root.setPadding(6, 5, 6, 5);
         root.setBackgroundColor(Color.rgb(10, 10, 10));
 
@@ -137,19 +136,19 @@ public class OverlayService extends Service {
         t90.setOnClickListener(v -> { SharedState.setCrowdDown(90); updateManualText(); });
 
         crowd = tv("CROWD -", 10, Color.GRAY, 1);
-        root.addView(crowd, new LinearLayout.LayoutParams(430, 34));
+        root.addView(crowd, new LinearLayout.LayoutParams(340, 26));
 
         phase = tv("MODE:-", 10, Color.rgb(53,214,255), 1);
         phase.setGravity(Gravity.LEFT);
-        root.addView(phase, new LinearLayout.LayoutParams(430, 38));
+        root.addView(phase, new LinearLayout.LayoutParams(350, 28));
 
         wait = tv("TUNGGU:-", 12, Color.rgb(255,209,92), 1);
         wait.setGravity(Gravity.LEFT);
-        root.addView(wait, new LinearLayout.LayoutParams(430, 42));
+        root.addView(wait, new LinearLayout.LayoutParams(350, 30));
 
         levels = tv("LEVEL:-", 9, Color.WHITE, 0);
         levels.setGravity(Gravity.LEFT);
-        root.addView(levels, new LinearLayout.LayoutParams(430, 115));
+        root.addView(levels, new LinearLayout.LayoutParams(350, 52));
 
         reason = tv("Auto scan berjalan setelah izin capture.", 9, Color.LTGRAY, 0);
         reason.setGravity(Gravity.LEFT);
@@ -160,14 +159,7 @@ public class OverlayService extends Service {
         reason.setMaxLines(6);
         reason.setVerticalScrollBarEnabled(true);
         reason.setMovementMethod(new ScrollingMovementMethod());
-
-        reason.setGravity(Gravity.LEFT);
-        reason.setSingleLine(false);
-        reason.setMinLines(4);
-        reason.setMaxLines(7);
-        reason.setVerticalScrollBarEnabled(true);
-        reason.setMovementMethod(new android.text.method.ScrollingMovementMethod());
-root.addView(reason, new LinearLayout.LayoutParams(430, 48));
+root.addView(reason, new LinearLayout.LayoutParams(350, 48));
 
         LinearLayout rowLearn = new LinearLayout(this);
         rowLearn.setOrientation(LinearLayout.HORIZONTAL);
