@@ -58,20 +58,21 @@ public class OverlayService extends Service {
         TextView v = new TextView(this);
         v.setText(t);
         v.setTextSize(size);
+        v.setIncludeFontPadding(true);
         v.setTextColor(color);
         v.setTypeface(null, style);
         v.setGravity(Gravity.CENTER);
-        v.setPadding(6, 3, 6, 3);
+        v.setPadding(4, 2, 4, 2);
         return v;
     }
 
     private Button btn(String t, int bg, int fg) {
         Button b = new Button(this);
         b.setText(t);
-        b.setTextSize(14);
+        b.setTextSize(11);
         b.setTextColor(fg);
         b.setBackgroundColor(bg);
-        b.setPadding(2, 1, 2, 1);
+        b.setPadding(1, 1, 1, 1);
         return b;
     }
 
@@ -83,15 +84,15 @@ public class OverlayService extends Service {
         root.setPadding(10, 8, 10, 8);
         root.setBackgroundColor(Color.rgb(10, 10, 10));
 
-        signal = tv("READY", 22, Color.rgb(255, 209, 92), 1);
-        root.addView(signal, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 58));
+        signal = tv("READY", 18, Color.rgb(255, 209, 92), 1);
+        root.addView(signal, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 46));
 
         LinearLayout row0 = new LinearLayout(this);
         row0.setOrientation(LinearLayout.HORIZONTAL);
         zone = tv("ZONE", 10, Color.WHITE, 1);
         stats = tv(TradeMemory.stats(this), 10, Color.GRAY, 1);
-        row0.addView(zone, new LinearLayout.LayoutParams(0, 34, 1f));
-        row0.addView(stats, new LinearLayout.LayoutParams(0, 34, 2f));
+        row0.addView(zone, new LinearLayout.LayoutParams(0, 30, 1f));
+        row0.addView(stats, new LinearLayout.LayoutParams(0, 30, 2f));
         root.addView(row0);
 
         LinearLayout rowPrice = new LinearLayout(this);
@@ -102,10 +103,10 @@ public class OverlayService extends Service {
         Button p5 = btn("+5", Color.rgb(34,34,34), Color.WHITE);
         Button p10 = btn("+10", Color.rgb(34,34,34), Color.WHITE);
         rowPrice.addView(price, new LinearLayout.LayoutParams(100, 38));
-        rowPrice.addView(m10, new LinearLayout.LayoutParams(58, 38));
-        rowPrice.addView(m5, new LinearLayout.LayoutParams(58, 38));
-        rowPrice.addView(p5, new LinearLayout.LayoutParams(58, 38));
-        rowPrice.addView(p10, new LinearLayout.LayoutParams(58, 38));
+        rowPrice.addView(m10, new LinearLayout.LayoutParams(0, 36, 1f));
+        rowPrice.addView(m5, new LinearLayout.LayoutParams(0, 36, 1f));
+        rowPrice.addView(p5, new LinearLayout.LayoutParams(0, 36, 1f));
+        rowPrice.addView(p10, new LinearLayout.LayoutParams(0, 36, 1f));
         root.addView(rowPrice);
 
         m10.setOnClickListener(v -> adjustPrice(-10));
@@ -124,10 +125,10 @@ public class OverlayService extends Service {
         Button n90 = btn("N90", Color.rgb(0,53,31), Color.rgb(0,255,136));
         Button t70 = btn("T70", Color.rgb(59,0,17), Color.rgb(255,59,95));
         Button t90 = btn("T90", Color.rgb(59,0,17), Color.rgb(255,59,95));
-        rowCrowd1.addView(n70, new LinearLayout.LayoutParams(0, 42, 1f));
-        rowCrowd1.addView(n90, new LinearLayout.LayoutParams(0, 42, 1f));
-        rowCrowd1.addView(t70, new LinearLayout.LayoutParams(0, 42, 1f));
-        rowCrowd1.addView(t90, new LinearLayout.LayoutParams(0, 42, 1f));
+        rowCrowd1.addView(n70, new LinearLayout.LayoutParams(0, 36, 1f));
+        rowCrowd1.addView(n90, new LinearLayout.LayoutParams(0, 36, 1f));
+        rowCrowd1.addView(t70, new LinearLayout.LayoutParams(0, 36, 1f));
+        rowCrowd1.addView(t90, new LinearLayout.LayoutParams(0, 36, 1f));
         root.addView(rowCrowd1);
 
         n70.setOnClickListener(v -> { SharedState.setCrowdUp(70); updateManualText(); });
@@ -150,7 +151,7 @@ public class OverlayService extends Service {
         levels.setGravity(Gravity.LEFT);
         root.addView(levels, new LinearLayout.LayoutParams(350, 52));
 
-        reason = tv("Auto scan berjalan setelah izin capture.", 13, Color.WHITE, 0);
+        reason = tv("Auto scan berjalan setelah izin capture.", 11, Color.WHITE, 0);
         reason.setGravity(Gravity.LEFT);
         
         reason.setGravity(Gravity.LEFT);
@@ -166,8 +167,8 @@ root.addView(reason, new LinearLayout.LayoutParams(350, 48));
         Button win = btn("WIN", Color.rgb(0,53,31), Color.rgb(0,255,136));
         Button loss = btn("LOSS", Color.rgb(59,0,17), Color.rgb(255,59,95));
         Button close = btn("X", Color.rgb(40,40,40), Color.WHITE);
-        rowLearn.addView(win, new LinearLayout.LayoutParams(0, 48, 1f));
-        rowLearn.addView(loss, new LinearLayout.LayoutParams(0, 48, 1f));
+        rowLearn.addView(win, new LinearLayout.LayoutParams(0, 40, 1f));
+        rowLearn.addView(loss, new LinearLayout.LayoutParams(0, 40, 1f));
         rowLearn.addView(close, new LinearLayout.LayoutParams(110, 38));
         root.addView(rowLearn);
 
@@ -177,7 +178,7 @@ root.addView(reason, new LinearLayout.LayoutParams(350, 48));
 
         int type = Build.VERSION.SDK_INT >= 26 ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-                760, 640,
+                700, 500,
                 type,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
