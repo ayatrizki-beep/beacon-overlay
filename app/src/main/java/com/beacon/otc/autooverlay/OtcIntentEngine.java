@@ -217,6 +217,8 @@ public class OtcIntentEngine {
             deathSpikeMinute = minute;
         }
 
+        // 55-57 = baca spike awal death zone.
+        // Jangan langsung entry. Simpan arah spike untuk validasi 58-59.
         if (sec >= 55 && sec <= 57) {
             if ("UP".equals(lastTick) || "upper".equals(d.wick) || "green".equals(d.dominant)) {
                 deathSpike = "UP_55_57";
@@ -227,19 +229,44 @@ public class OtcIntentEngine {
             }
         }
 
+        // 58-59 = validasi akhir:
+        // - kalau spike dibalik oleh wick/tick lawan = trap close
+        // - kalau spike lanjut searah tanpa rejection = continuation
         if (sec >= 58) {
-            if ("UP_55_57".equals(deathSpike) && ("DOWN".equals(lastTick) || "upper".equals(d.wick))) {
-                preparedBias = "SELL";
-                preparedPhase = "BUY TRAP CLOSE";
-                preparedConfidence = Math.max(preparedConfidence, 70);
-                preparedMinute = minute;
+            if ("UP_55_57".equals(deathSpike)) {
+                if ("DOWN".equals(lastTick) || "upper".equals(d.wick)) {
+                    preparedBias = "SELL";
+                    preparedPhase = "BUY TRAP CLOSE";
+                    preparedConfidence = Math.max(preparedConfidence, 72);
+                    preparedMinute = minute;
+                    return;
+                }
+
+                if (("UP".equals(lastTick) || "green".equals(d.dominant)) && !"upper".equals(d.wick)) {
+                    preparedBias = "BUY";
+                    preparedPhase = "BUY CONTINUATION";
+                    preparedConfidence = Math.max(preparedConfidence, 68);
+                    preparedMinute = minute;
+                    return;
+                }
             }
 
-            if ("DOWN_55_57".equals(deathSpike) && ("UP".equals(lastTick) || "lower".equals(d.wick))) {
-                preparedBias = "BUY";
-                preparedPhase = "SELL TRAP CLOSE";
-                preparedConfidence = Math.max(preparedConfidence, 70);
-                preparedMinute = minute;
+            if ("DOWN_55_57".equals(deathSpike)) {
+                if ("UP".equals(lastTick) || "lower".equals(d.wick)) {
+                    preparedBias = "BUY";
+                    preparedPhase = "SELL TRAP CLOSE";
+                    preparedConfidence = Math.max(preparedConfidence, 72);
+                    preparedMinute = minute;
+                    return;
+                }
+
+                if (("DOWN".equals(lastTick) || "red".equals(d.dominant)) && !"lower".equals(d.wick)) {
+                    preparedBias = "SELL";
+                    preparedPhase = "SELL CONTINUATION";
+                    preparedConfidence = Math.max(preparedConfidence, 68);
+                    preparedMinute = minute;
+                    return;
+                }
             }
         }
     }
