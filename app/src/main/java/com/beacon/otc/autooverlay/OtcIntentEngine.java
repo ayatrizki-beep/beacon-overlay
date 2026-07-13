@@ -63,7 +63,7 @@ public class OtcIntentEngine {
 
             r.signal = preparedBias + " SIAPKAN";
             r.phase = "VALIDASI ARAH / GOLD";
-            r.wait = "ARAH SAJA. Jangan klik. Tunggu candle baru 02-04.";
+            r.wait = "ARAH SAJA. Jangan klik. Entry 1M hanya candle baru 02-04.";
             r.levels = makeLevels(preparedBias);
             r.reason = "45-54 adalah zona baca arah, bukan klik. " +
                     makeReason(d, crowd, zone, preparedBias, "PREPARE", preparedConfidence);
@@ -82,7 +82,7 @@ public class OtcIntentEngine {
             String spikeInfo = deathSpike;
             r.signal = preparedBias + " TUNGGU CANDLE BARU";
             r.phase = "DEATH ZONE / FAKE SPIKE WATCH";
-            r.wait = "Jangan klik 55-59. Tunggu candle baru 02-04.";
+            r.wait = "Jangan klik 55-59. Tunggu candle baru 02-04 untuk 1M.";
             r.levels = makeLevels(preparedBias);
             r.reason = "55-59 rawan fake spike. Spike:" + spikeInfo + " | " +
                     makeReason(d, crowd, zone, preparedBias, "WAIT NEXT", preparedConfidence);
@@ -95,9 +95,9 @@ public class OtcIntentEngine {
             boolean tickOk = tickSupports(preparedBias);
 
             if (hasFreshPrepare && preparedConfidence >= 58 && tickOk) {
-                r.signal = preparedBias + " SEKARANG";
+                r.signal = preparedBias + " 1M SEKARANG";
                 r.phase = "EXECUTION WINDOW";
-                r.wait = "KLIK SEKARANG. Valid 02-04. Expiry FULL 1M.";
+                r.wait = "KLIK SEKARANG. Expiry 1M. Valid hanya 02-04.";
                 r.levels = makeLevels(preparedBias);
                 r.reason = "Entry valid karena candle baru mulai + tick mendukung. " +
                         "Tick:" + lastTick + " | " +
@@ -107,9 +107,9 @@ public class OtcIntentEngine {
             }
 
             if (hasFreshPrepare && preparedConfidence >= 50 && !tickOk) {
-                r.signal = preparedBias + " TUNGGU TICK";
+                r.signal = preparedBias + " 1M TUNGGU TICK";
                 r.phase = "EXECUTION WINDOW";
-                r.wait = "Arah ada, tapi tick belum mendukung. Lewat 05 detik = batal.";
+                r.wait = "Arah ada, tapi tick belum mendukung. Lewat detik 04 = batal 1M.";
                 r.levels = makeLevels(preparedBias);
                 r.reason = "Jangan klik kalau tick berlawanan. Tick:" + lastTick + " | " +
                         makeReason(d, crowd, zone, preparedBias, "WAIT TICK", preparedConfidence);
@@ -158,7 +158,7 @@ public class OtcIntentEngine {
 
             r.signal = "SKIP";
             r.phase = "STOP HUNT";
-            r.wait = "Jangan entry. Area 30-44 sering pancingan.";
+            r.wait = "SKIP 1M. Area 30-44 sering pancingan. 1M30/5M hanya jika TF besar mendukung.";
             r.levels = makeLevels(bias);
             r.reason = "30-44 bukan zona klik. Baca arah saja. Bias sementara:" + bias +
                     " | Tick:" + lastTick + " | " +
@@ -169,9 +169,9 @@ public class OtcIntentEngine {
 
         r.signal = "WAIT";
         r.phase = "NOISE";
-        r.wait = "05-15 sudah telat untuk 1M murni. Jangan kejar; tunggu setup berikutnya.";
+        r.wait = "05-15 telat untuk 1M. Untuk 1M30/5M wajib tunggu konfirmasi kuat.";
         r.levels = "Fake:- | Batal:- | Target:-";
-        r.reason = "Belum ada setup final. Tick:" + lastTick + " | " +
+        r.reason = "Expiry selector: 1M tidak valid tanpa setup fresh. Tick:" + lastTick + " | " +
                 makeReason(d, crowd, zone, liveBias, "WAIT", liveConf);
         r.confidence = Math.max(10, liveConf - 25);
         return r;
