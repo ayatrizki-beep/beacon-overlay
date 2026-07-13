@@ -99,7 +99,7 @@ public class OtcIntentEngine {
                 r.phase = "EXECUTION WINDOW";
                 r.wait = "KLIK SEKARANG. Expiry 1M. Valid hanya 02-04.";
                 r.levels = makeLevels(preparedBias);
-                r.reason = "Entry valid karena candle baru mulai + tick mendukung. " +
+                r.reason = "Entry valid: confidence >=70, candle baru 02-04, tick mendukung. " +
                         "Tick:" + lastTick + " | " +
                         makeReason(d, crowd, zone, preparedBias, "NOW", preparedConfidence);
                 r.confidence = Math.min(95, preparedConfidence + 7);
@@ -109,7 +109,7 @@ public class OtcIntentEngine {
             if (hasFreshPrepare && preparedConfidence >= 50 && !tickOk) {
                 r.signal = preparedBias + " 1M TUNGGU TICK";
                 r.phase = "EXECUTION WINDOW";
-                r.wait = "Arah ada, tapi tick belum mendukung. Lewat detik 04 = batal 1M.";
+                r.wait = "Arah ada, tapi tick belum mendukung. Confidence cukup, tapi lewat detik 04 = batal 1M.";
                 r.levels = makeLevels(preparedBias);
                 r.reason = "Jangan klik kalau tick berlawanan. Tick:" + lastTick + " | " +
                         makeReason(d, crowd, zone, preparedBias, "WAIT TICK", preparedConfidence);
@@ -382,33 +382,50 @@ public class OtcIntentEngine {
     }
 
     private static int confidence(String crowd, BitmapAnalyzer.Data d, String zone, String bias) {
-        if ("SKIP".equals(bias)) return 25;
+        if ("SKIP".equals(bias)) return 20;
 
-        int c = 40;
+        // HARD FILTER: kondisi visual belum layak untuk entry presisi.
+        if (d.doji) return 22;
+        if ("mixed".equals(d.dominant) || "none".equals(d.dominant)) return 24;
+        if ("two_way".equals(d.wick)) return 26;
+        if (mhiAgainstBias(d, bias)) return 32;
 
-        if ("buy_extreme".equals(crowd) || "sell_extreme".equals(crowd)) c += 24;
-        else if ("buy_heavy".equals(crowd) || "sell_heavy".equals(crowd)) c += 17;
-        else if ("buy_light".equals(crowd) || "sell_light".equals(crowd)) c += 8;
+        int c = 38;
 
-        if (wickFollowsBias(d, bias)) c += 15;
-        else if ("two_way".equals(d.wick)) c -= 8;
+        // Crowd hanya menambah confidence, bukan penentu tunggal.
+        if ("buy_extreme".equals(crowd) || "sell_extreme".equals(crowd)) c += 22;
+        else if ("buy_heavy".equals(crowd) || "sell_heavy".equals(crowd)) c += 15;
+        else if ("buy_light".equals(crowd) || "sell_light".equals(crowd)) c += 6;
 
-        if (candleFollowsBias(d, bias)) c += 10;
-        else if (!d.doji && ("green".equals(d.dominant) || "red".equals(d.dominant))) c += 4;
+        // Wick searah bias adalah nilai paling penting untuk trap/recovery.
+        if (wickFollowsBias(d, bias)) c += 18;
+        else {
+            if ("BUY".equals(bias) && "upper".equals(d.wick)) c -= 18;
+            if ("SELL".equals(bias) && "lower".equals(d.wick)) c -= 18;
+        }
 
+        // Candle body harus mendukung arah, tapi tidak boleh mengalahkan wick.
+        if (candleFollowsBias(d, bias)) c += 12;
+        else if ("green".equals(d.dominant) || "red".equals(d.dominant)) c += 2;
+
+        // Body kuat tambah sedikit confidence.
+        if (d.bodyRatio >= 0.50) c += 8;
+        else if (d.bodyRatio >= 0.35) c += 4;
+        else c -= 8;
+
+        // Trap done menambah validasi, tapi tetap kalah oleh hard filter di atas.
         if (trapDone(d, crowd, bias)) c += 12;
-        if (mhiAgainstBias(d, bias)) c -= 8;
-        if (d.doji) c -= 15;
 
-        if ("prepare".equals(zone)) c += 8;
-        if ("death".equals(zone)) c -= 5;
-        if ("execute".equals(zone)) c += 6;
-        if ("stop".equals(zone)) c -= 10;
-        if ("missed".equals(zone)) c -= 15;
+        // Zona waktu.
+        if ("prepare".equals(zone)) c += 6;
+        if ("death".equals(zone)) c -= 3;
+        if ("execute".equals(zone)) c += 8;
+        if ("late".equals(zone)) c -= 12;
+        if ("stop".equals(zone)) c -= 15;
+        if ("missed".equals(zone)) c -= 20;
 
         if (c < 5) c = 5;
         if (c > 95) c = 95;
-
         return c;
     }
 
