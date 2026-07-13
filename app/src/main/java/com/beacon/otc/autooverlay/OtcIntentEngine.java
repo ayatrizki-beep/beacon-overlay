@@ -42,6 +42,17 @@ public class OtcIntentEngine {
 
         updateDeathSpike(d, sec, minute);
 
+        if ("open_noise".equals(zone)) {
+            r.signal = "TUNGGU 02";
+            r.phase = "OPEN NOISE";
+            r.wait = "00-01 jangan klik. Tunggu detik 02-04 jika setup fresh.";
+            r.levels = makeLevels(preparedBias);
+            r.reason = "Open noise. Candle baru belum stabil. | Tick:" + lastTick +
+                    " | " + makeReason(d, crowd, zone, preparedBias, "OPEN_NOISE", Math.max(10, liveConf - 20));
+            r.confidence = Math.max(10, liveConf - 20);
+            return r;
+        }
+
         if ("prepare".equals(zone)) {
             if (!"SKIP".equals(liveBias) && liveConf >= 50) {
                 preparedBias = liveBias;
@@ -52,7 +63,7 @@ public class OtcIntentEngine {
 
             r.signal = preparedBias + " SIAPKAN";
             r.phase = "VALIDASI ARAH / GOLD";
-            r.wait = "ARAH SAJA. Jangan klik. Tunggu candle baru 00-05.";
+            r.wait = "ARAH SAJA. Jangan klik. Tunggu candle baru 02-04.";
             r.levels = makeLevels(preparedBias);
             r.reason = "45-54 adalah zona baca arah, bukan klik. " +
                     makeReason(d, crowd, zone, preparedBias, "PREPARE", preparedConfidence);
@@ -71,7 +82,7 @@ public class OtcIntentEngine {
             String spikeInfo = deathSpike;
             r.signal = preparedBias + " TUNGGU CANDLE BARU";
             r.phase = "DEATH ZONE / FAKE SPIKE WATCH";
-            r.wait = "Jangan klik 55-59. Tunggu candle baru 00-05.";
+            r.wait = "Jangan klik 55-59. Tunggu candle baru 02-04.";
             r.levels = makeLevels(preparedBias);
             r.reason = "55-59 rawan fake spike. Spike:" + spikeInfo + " | " +
                     makeReason(d, crowd, zone, preparedBias, "WAIT NEXT", preparedConfidence);
@@ -86,7 +97,7 @@ public class OtcIntentEngine {
             if (hasFreshPrepare && preparedConfidence >= 58 && tickOk) {
                 r.signal = preparedBias + " SEKARANG";
                 r.phase = "EXECUTION WINDOW";
-                r.wait = "KLIK SEKARANG. Valid 00-05. Expiry FULL 1M.";
+                r.wait = "KLIK SEKARANG. Valid 02-04. Expiry FULL 1M.";
                 r.levels = makeLevels(preparedBias);
                 r.reason = "Entry valid karena candle baru mulai + tick mendukung. " +
                         "Tick:" + lastTick + " | " +
@@ -121,7 +132,7 @@ public class OtcIntentEngine {
                 r.phase = "LATE 1M";
                 r.wait = "TELAT untuk 1M. Jangan kejar. 1M30/2M wajib TF 5M dan 10M searah.";
                 r.levels = makeLevels(preparedBias);
-                r.reason = "00-05 sudah lewat. Untuk 1M ini terlambat. Tick:" + lastTick +
+                r.reason = "02-04 sudah lewat. Untuk 1M ini terlambat. Tick:" + lastTick +
                         " | MTF manual wajib cek 10M -> 5M -> 2M.";
                 r.confidence = Math.max(20, preparedConfidence - 10);
                 return r;
@@ -158,7 +169,7 @@ public class OtcIntentEngine {
 
         r.signal = "WAIT";
         r.phase = "NOISE";
-        r.wait = "0-15 hanya baca awal. Entry 1M valid nanti 00-05 setelah prepare candle sebelumnya.";
+        r.wait = "05-15 sudah telat untuk 1M murni. Jangan kejar; tunggu setup berikutnya.";
         r.levels = "Fake:- | Batal:- | Target:-";
         r.reason = "Belum ada setup final. Tick:" + lastTick + " | " +
                 makeReason(d, crowd, zone, liveBias, "WAIT", liveConf);
@@ -378,7 +389,8 @@ public class OtcIntentEngine {
     }
 
     private static String zoneType(int sec) {
-        if (sec <= 5) return "execute";
+        if (sec <= 1) return "open_noise";
+        if (sec <= 4) return "execute";
         if (sec <= 15) return "late";
         if (sec <= 29) return "missed";
         if (sec <= 44) return "stop";
