@@ -68,10 +68,10 @@ public class OverlayService extends Service {
     private Button btn(String t, int bg, int fg) {
         Button b = new Button(this);
         b.setText(t);
-        b.setTextSize(20);
+        b.setTextSize(14);
         b.setTextColor(fg);
         b.setBackgroundColor(bg);
-        b.setPadding(1,1,1,1);
+        b.setPadding(2, 1, 2, 1);
         return b;
     }
 
@@ -83,15 +83,15 @@ public class OverlayService extends Service {
         root.setPadding(10, 8, 10, 8);
         root.setBackgroundColor(Color.rgb(10, 10, 10));
 
-        signal = tv("READY", 26, Color.rgb(255, 209, 92), 1);
-        root.addView(signal, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 84));
+        signal = tv("READY", 22, Color.rgb(255, 209, 92), 1);
+        root.addView(signal, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 58));
 
         LinearLayout row0 = new LinearLayout(this);
         row0.setOrientation(LinearLayout.HORIZONTAL);
         zone = tv("ZONE", 10, Color.WHITE, 1);
         stats = tv(TradeMemory.stats(this), 10, Color.GRAY, 1);
-        row0.addView(zone, new LinearLayout.LayoutParams(120, 28));
-        row0.addView(stats, new LinearLayout.LayoutParams(220, 28));
+        row0.addView(zone, new LinearLayout.LayoutParams(0, 34, 1f));
+        row0.addView(stats, new LinearLayout.LayoutParams(0, 34, 2f));
         root.addView(row0);
 
         LinearLayout rowPrice = new LinearLayout(this);
@@ -124,10 +124,10 @@ public class OverlayService extends Service {
         Button n90 = btn("N90", Color.rgb(0,53,31), Color.rgb(0,255,136));
         Button t70 = btn("T70", Color.rgb(59,0,17), Color.rgb(255,59,95));
         Button t90 = btn("T90", Color.rgb(59,0,17), Color.rgb(255,59,95));
-        rowCrowd1.addView(n70, new LinearLayout.LayoutParams(82, 38));
-        rowCrowd1.addView(n90, new LinearLayout.LayoutParams(82, 38));
-        rowCrowd1.addView(t70, new LinearLayout.LayoutParams(82, 38));
-        rowCrowd1.addView(t90, new LinearLayout.LayoutParams(82, 38));
+        rowCrowd1.addView(n70, new LinearLayout.LayoutParams(0, 42, 1f));
+        rowCrowd1.addView(n90, new LinearLayout.LayoutParams(0, 42, 1f));
+        rowCrowd1.addView(t70, new LinearLayout.LayoutParams(0, 42, 1f));
+        rowCrowd1.addView(t90, new LinearLayout.LayoutParams(0, 42, 1f));
         root.addView(rowCrowd1);
 
         n70.setOnClickListener(v -> { SharedState.setCrowdUp(70); updateManualText(); });
@@ -150,13 +150,13 @@ public class OverlayService extends Service {
         levels.setGravity(Gravity.LEFT);
         root.addView(levels, new LinearLayout.LayoutParams(350, 52));
 
-        reason = tv("Auto scan berjalan setelah izin capture.", 14, Color.WHITE, 0);
+        reason = tv("Auto scan berjalan setelah izin capture.", 13, Color.WHITE, 0);
         reason.setGravity(Gravity.LEFT);
         
         reason.setGravity(Gravity.LEFT);
         reason.setSingleLine(false);
-        reason.setMinLines(5);
-        reason.setMaxLines(9);
+        reason.setMinLines(3);
+        reason.setMaxLines(6);
         reason.setVerticalScrollBarEnabled(true);
         reason.setMovementMethod(new ScrollingMovementMethod());
 root.addView(reason, new LinearLayout.LayoutParams(350, 48));
@@ -166,8 +166,8 @@ root.addView(reason, new LinearLayout.LayoutParams(350, 48));
         Button win = btn("WIN", Color.rgb(0,53,31), Color.rgb(0,255,136));
         Button loss = btn("LOSS", Color.rgb(59,0,17), Color.rgb(255,59,95));
         Button close = btn("X", Color.rgb(40,40,40), Color.WHITE);
-        rowLearn.addView(win, new LinearLayout.LayoutParams(150, 52));
-        rowLearn.addView(loss, new LinearLayout.LayoutParams(150, 52));
+        rowLearn.addView(win, new LinearLayout.LayoutParams(0, 48, 1f));
+        rowLearn.addView(loss, new LinearLayout.LayoutParams(0, 48, 1f));
         rowLearn.addView(close, new LinearLayout.LayoutParams(110, 38));
         root.addView(rowLearn);
 
