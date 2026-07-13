@@ -61,7 +61,7 @@ public class OverlayService extends Service {
         v.setTextColor(color);
         v.setTypeface(null, style);
         v.setGravity(Gravity.CENTER);
-        v.setPadding(8, 4, 8, 4);
+        v.setPadding(6, 3, 6, 3);
         return v;
     }
 
@@ -80,11 +80,11 @@ public class OverlayService extends Service {
 
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(12, 10, 12, 10);
+        root.setPadding(10, 8, 10, 8);
         root.setBackgroundColor(Color.rgb(10, 10, 10));
 
-        signal = tv("READY", 28, Color.rgb(255, 209, 92), 1);
-        root.addView(signal, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 72));
+        signal = tv("READY", 26, Color.rgb(255, 209, 92), 1);
+        root.addView(signal, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 84));
 
         LinearLayout row0 = new LinearLayout(this);
         row0.setOrientation(LinearLayout.HORIZONTAL);
@@ -150,13 +150,13 @@ public class OverlayService extends Service {
         levels.setGravity(Gravity.LEFT);
         root.addView(levels, new LinearLayout.LayoutParams(350, 52));
 
-        reason = tv("Auto scan berjalan setelah izin capture.", 13, Color.WHITE, 0);
+        reason = tv("Auto scan berjalan setelah izin capture.", 14, Color.WHITE, 0);
         reason.setGravity(Gravity.LEFT);
         
         reason.setGravity(Gravity.LEFT);
         reason.setSingleLine(false);
-        reason.setMinLines(4);
-        reason.setMaxLines(7);
+        reason.setMinLines(5);
+        reason.setMaxLines(9);
         reason.setVerticalScrollBarEnabled(true);
         reason.setMovementMethod(new ScrollingMovementMethod());
 root.addView(reason, new LinearLayout.LayoutParams(350, 48));
@@ -166,8 +166,8 @@ root.addView(reason, new LinearLayout.LayoutParams(350, 48));
         Button win = btn("WIN", Color.rgb(0,53,31), Color.rgb(0,255,136));
         Button loss = btn("LOSS", Color.rgb(59,0,17), Color.rgb(255,59,95));
         Button close = btn("X", Color.rgb(40,40,40), Color.WHITE);
-        rowLearn.addView(win, new LinearLayout.LayoutParams(130, 48));
-        rowLearn.addView(loss, new LinearLayout.LayoutParams(130, 48));
+        rowLearn.addView(win, new LinearLayout.LayoutParams(150, 52));
+        rowLearn.addView(loss, new LinearLayout.LayoutParams(150, 52));
         rowLearn.addView(close, new LinearLayout.LayoutParams(110, 38));
         root.addView(rowLearn);
 
@@ -177,7 +177,7 @@ root.addView(reason, new LinearLayout.LayoutParams(350, 48));
 
         int type = Build.VERSION.SDK_INT >= 26 ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-                620, 520,
+                760, 640,
                 type,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
