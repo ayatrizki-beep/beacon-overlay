@@ -256,17 +256,43 @@ public class OtcIntentEngine {
     }
 
     private static String decideBias(BitmapAnalyzer.Data d, String crowd) {
-        if ("buy_extreme".equals(crowd) || "buy_heavy".equals(crowd)) return "SELL";
-        if ("sell_extreme".equals(crowd) || "sell_heavy".equals(crowd)) return "BUY";
+        // 1) Crowd ekstrem tetap dibaca sebagai potensi squeeze/kontra crowd,
+        // tapi jangan melawan wick trap yang jelas.
+        if ("upper".equals(d.wick)) return "SELL"; // BUY trap / rejection atas
+        if ("lower".equals(d.wick)) return "BUY";  // SELL trap / recovery bawah
 
-        if ("upper".equals(d.wick)) return "SELL";
-        if ("lower".equals(d.wick)) return "BUY";
+        if ("buy_extreme".equals(crowd) || "buy_heavy".equals(crowd)) {
+            if ("red".equals(d.dominant) || "mixed".equals(d.mhi)) return "SELL";
+        }
 
-        if (!d.doji) {
-            if ("green".equals(d.dominant) && d.bodyRatio >= 0.42) return "SELL";
-            if ("red".equals(d.dominant) && d.bodyRatio >= 0.42) return "BUY";
-            if ("green".equals(d.dominant) && "buy_light".equals(crowd)) return "SELL";
-            if ("red".equals(d.dominant) && "sell_light".equals(crowd)) return "BUY";
+        if ("sell_extreme".equals(crowd) || "sell_heavy".equals(crowd)) {
+            if ("green".equals(d.dominant) || "mixed".equals(d.mhi)) return "BUY";
+        }
+
+        // 2) Doji / mixed tidak cukup untuk entry.
+        if (d.doji || "mixed".equals(d.dominant) || "none".equals(d.dominant)) {
+            return "SKIP";
+        }
+
+        // 3) Candle warna kuat boleh follow arah, bukan dibalik buta.
+        // Ini koreksi besar dari engine lama.
+        if ("green".equals(d.dominant) && d.bodyRatio >= 0.50) {
+            if ("red".equals(d.mhi)) return "SKIP"; // MHI berlawanan, rawan fake
+            return "BUY";
+        }
+
+        if ("red".equals(d.dominant) && d.bodyRatio >= 0.50) {
+            if ("green".equals(d.mhi)) return "SKIP"; // MHI berlawanan, rawan fake
+            return "SELL";
+        }
+
+        // 4) Body sedang: ikut arah hanya kalau MHI mendukung.
+        if ("green".equals(d.dominant) && "green".equals(d.mhi) && d.bodyRatio >= 0.35) {
+            return "BUY";
+        }
+
+        if ("red".equals(d.dominant) && "red".equals(d.mhi) && d.bodyRatio >= 0.35) {
+            return "SELL";
         }
 
         return "SKIP";
@@ -278,18 +304,18 @@ public class OtcIntentEngine {
         if ("SELL".equals(bias)) {
             if ("buy_extreme".equals(crowd)) return "BUY TRAP EKSTREM";
             if ("buy_heavy".equals(crowd)) return "PANCING BUY";
-            if ("upper".equals(d.wick)) return "REJECTION ATAS";
-            if ("green".equals(d.dominant)) return "POTENSI BUY TRAP";
-            if ("red".equals(d.dominant)) return "HUKUM BUY";
+            if ("upper".equals(d.wick)) return "UPPER WICK REJECTION";
+            if ("green".equals(d.dominant)) return "BUY TRAP / UPPER WICK";
+            if ("red".equals(d.dominant)) return "BUY TRAP CONFIRM";
             return "NIAT SELL";
         }
 
         if ("BUY".equals(bias)) {
             if ("sell_extreme".equals(crowd)) return "SELL TRAP EKSTREM";
             if ("sell_heavy".equals(crowd)) return "PANCING SELL";
-            if ("lower".equals(d.wick)) return "REJECTION BAWAH";
-            if ("red".equals(d.dominant)) return "POTENSI SELL TRAP";
-            if ("green".equals(d.dominant)) return "HUKUM SELL";
+            if ("lower".equals(d.wick)) return "LOWER WICK RECOVERY";
+            if ("red".equals(d.dominant)) return "SELL TRAP / LOWER WICK";
+            if ("green".equals(d.dominant)) return "SELL TRAP CONFIRM";
             return "NIAT BUY";
         }
 
