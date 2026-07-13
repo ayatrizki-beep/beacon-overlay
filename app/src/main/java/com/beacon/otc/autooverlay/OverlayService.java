@@ -68,7 +68,7 @@ public class OverlayService extends Service {
     private Button btn(String t, int bg, int fg) {
         Button b = new Button(this);
         b.setText(t);
-        b.setTextSize(10);
+        b.setTextSize(20);
         b.setTextColor(fg);
         b.setBackgroundColor(bg);
         b.setPadding(1,1,1,1);
@@ -177,7 +177,7 @@ root.addView(reason, new LinearLayout.LayoutParams(350, 48));
 
         int type = Build.VERSION.SDK_INT >= 26 ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-                370, WindowManager.LayoutParams.WRAP_CONTENT,
+                620, 520,
                 type,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
