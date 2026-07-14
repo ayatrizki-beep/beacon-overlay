@@ -94,12 +94,17 @@ public class OtcIntentEngine {
             boolean hasFreshPrepare = preparedMinute >= 0 && preparedMinute != minute && !"SKIP".equals(preparedBias);
             boolean tickOk = tickSupports(preparedBias);
 
-            if (hasFreshPrepare && preparedConfidence >= 58 && tickOk) {
+            boolean noDoji = !d.doji;
+            boolean candleOk = candleFollowsBias(d, preparedBias) || wickFollowsBias(d, preparedBias);
+            boolean mhiOk = !mhiAgainstBias(d, preparedBias);
+            boolean entrySafe = hasFreshPrepare && preparedConfidence >= 70 && tickOk && noDoji && candleOk && mhiOk;
+
+            if (entrySafe) {
                 r.signal = preparedBias + " 1M SEKARANG";
                 r.phase = "EXECUTION WINDOW";
                 r.wait = "KLIK 1M SEKARANG. Valid 02-04.";
                 r.levels = makeLevels(preparedBias);
-                r.reason = "Entry valid: confidence >=70, candle baru 02-04, tick mendukung. " +
+                r.reason = "ENTRY SAFE: conf>=70, tick+candle+MHI valid. " +
                         "Tick:" + lastTick + " | " +
                         makeReason(d, crowd, zone, preparedBias, "NOW", preparedConfidence);
                 r.confidence = Math.min(95, preparedConfidence + 7);
